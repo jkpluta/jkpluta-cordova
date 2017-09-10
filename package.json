@@ -1,13 +1,16 @@
 {
-    "name": "jkpluta-cordova",
+    "name": "jkpluta-electron",
     "displayName": "Jan K. Pluta",
-    "version": "0.9.0",
-    "description": "Jan K. Pluta",
+    "version": "0.9.7",
+    "description": "Eksperymentalna strona startowa",
     "main": "index.js",
-    "scripts": {
+    "scripts": {},
+    "author": {
+        "name": "Jan K. Pluta",
+        "email": "jkpluta@gmail.com",
+        "url": "jkpluta.github.io"
     },
-    "author": "Apache Cordova Team",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "dependencies": {
         "cordova-android": "^6.2.3",
         "cordova-browser": "^4.1.0",
