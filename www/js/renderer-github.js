@@ -766,25 +766,6 @@ function callbackErrorOrThrow(cb, path) {
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-if (window.jkpSharedObj == null)
-    window.jkpSharedObj = {};
-function version() {
-    return "0.1.0.0";
-}
-exports.version = version;
-function sharedObj() {
-    return window.jkpSharedObj;
-}
-exports.sharedObj = sharedObj;
-//# sourceMappingURL=jkp-utils.js.map
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports) {
 
 var g;
@@ -809,6 +790,25 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+if (window.jkpSharedObj == null)
+    window.jkpSharedObj = {};
+function version() {
+    return "0.1.0.0";
+}
+exports.version = version;
+function sharedObj() {
+    return window.jkpSharedObj;
+}
+exports.sharedObj = sharedObj;
+//# sourceMappingURL=jkp-utils.js.map
 
 /***/ }),
 /* 4 */
@@ -1297,11 +1297,11 @@ module.exports = defaults;
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/*
+/* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
  * $Id: base64.js,v 2.15 2014/04/05 12:58:57 dankogai Exp dankogai $
  *
- *  Licensed under the MIT license.
- *    http://opensource.org/licenses/mit-license
+ *  Licensed under the BSD 3-Clause License.
+ *    http://opensource.org/licenses/BSD-3-Clause
  *
  *  References:
  *    http://en.wikipedia.org/wiki/Base64
@@ -1311,7 +1311,7 @@ module.exports = defaults;
     'use strict';
     // existing version for noConflict()
     var _Base64 = global.Base64;
-    var version = "2.1.9";
+    var version = "2.3.1";
     // if node.js, we use Buffer
     var buffer;
     if (typeof module !== 'undefined' && module.exports) {
@@ -1370,11 +1370,16 @@ module.exports = defaults;
     } : function(b) {
         return b.replace(/[\s\S]{1,3}/g, cb_encode);
     };
-    var _encode = buffer ? function (u) {
-        return (u.constructor === buffer.constructor ? u : new buffer(u))
-        .toString('base64')
-    }
-    : function (u) { return btoa(utob(u)) }
+    var _encode = buffer ?
+        buffer.from ? function (u) {
+            return (u.constructor === buffer.constructor ? u : buffer.from(u))
+                .toString('base64')
+        }
+        :  function (u) {
+            return (u.constructor === buffer.constructor ? u : new  buffer(u))
+                .toString('base64')
+        }
+        : function (u) { return btoa(utob(u)) }
     ;
     var encode = function(u, urisafe) {
         return !urisafe
@@ -1436,11 +1441,16 @@ module.exports = defaults;
     } : function(a){
         return a.replace(/[\s\S]{1,4}/g, cb_decode);
     };
-    var _decode = buffer ? function(a) {
-        return (a.constructor === buffer.constructor
-                ? a : new buffer(a, 'base64')).toString();
-    }
-    : function(a) { return btou(atob(a)) };
+    var _decode = buffer ?
+        buffer.from ? function(a) {
+            return (a.constructor === buffer.constructor
+                    ? a : buffer.from(a, 'base64')).toString();
+        }
+        : function(a) {
+            return (a.constructor === buffer.constructor
+                    ? a : new buffer(a, 'base64')).toString();
+        }
+        : function(a) { return btou(atob(a)) };
     var decode = function(a){
         return _decode(
             String(a).replace(/[-_]/g, function(m0) { return m0 == '-' ? '+' : '/' })
@@ -1486,12 +1496,30 @@ module.exports = defaults;
                 }));
         };
     }
-    // that's it!
-    if (global['Meteor']) {
-       Base64 = global.Base64; // for normal export in Meteor.js
+    //
+    // export Base64 to the namespace
+    //
+    if (global['Meteor']) { // Meteor.js
+        Base64 = global.Base64;
     }
-})(this);
+    // module.exports and AMD are mutually exclusive.
+    // module.exports has precedence.
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports.Base64 = global.Base64;
+    }
+    else if (true) {		
+        // AMD. Register as an anonymous module.	
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function(){ return global.Base64 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    }
+    // that's it!
+})(   typeof self   !== 'undefined' ? self
+    : typeof window !== 'undefined' ? window
+    : typeof global !== 'undefined' ? global
+    : this
+);
 
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 8 */
@@ -3553,7 +3581,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 14 */,
@@ -3572,7 +3600,7 @@ function isnan (val) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var jkp = __webpack_require__(2);
+var jkp = __webpack_require__(3);
 var GitHub = __webpack_require__(25);
 var jsBase = __webpack_require__(7);
 function readFromSettings(name) {
@@ -7775,7 +7803,7 @@ module.exports = Repository;
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(56)(module), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(56)(module), __webpack_require__(2)))
 
 /***/ }),
 /* 56 */

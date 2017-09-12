@@ -65,35 +65,20 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 2:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-if (window.jkpSharedObj == null)
-    window.jkpSharedObj = {};
-function version() {
-    return "0.1.0.0";
-}
-exports.version = version;
-function sharedObj() {
-    return window.jkpSharedObj;
-}
-exports.sharedObj = sharedObj;
-//# sourceMappingURL=jkp-utils.js.map
-
-/***/ }),
-
 /***/ 23:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var jkp = __webpack_require__(2);
+var jkp = __webpack_require__(3);
 function loadUrl(url) {
-    window.location = "./" + url.substring(1) + ".html";
+    if (url == null || url === '' || url === '#')
+        return false;
+    if (url.substring(0, 1) === '#')
+        window.location = "./" + url.substring(1) + ".html";
+    else
+        window.location = url;
     return true;
 }
 exports.loadUrl = loadUrl;
@@ -123,6 +108,26 @@ jkp.sharedObj().loadUrl = loadUrl;
 jkp.sharedObj().readFromSettings = readFromSettings;
 jkp.sharedObj().writeToSettings = writeToSettings;
 //# sourceMappingURL=renderer-www.js.map
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+if (window.jkpSharedObj == null)
+    window.jkpSharedObj = {};
+function version() {
+    return "0.1.0.0";
+}
+exports.version = version;
+function sharedObj() {
+    return window.jkpSharedObj;
+}
+exports.sharedObj = sharedObj;
+//# sourceMappingURL=jkp-utils.js.map
 
 /***/ })
 

@@ -67,25 +67,6 @@
 /* 0 */,
 /* 1 */,
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-if (window.jkpSharedObj == null)
-    window.jkpSharedObj = {};
-function version() {
-    return "0.1.0.0";
-}
-exports.version = version;
-function sharedObj() {
-    return window.jkpSharedObj;
-}
-exports.sharedObj = sharedObj;
-//# sourceMappingURL=jkp-utils.js.map
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports) {
 
 var g;
@@ -110,6 +91,25 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+if (window.jkpSharedObj == null)
+    window.jkpSharedObj = {};
+function version() {
+    return "0.1.0.0";
+}
+exports.version = version;
+function sharedObj() {
+    return window.jkpSharedObj;
+}
+exports.sharedObj = sharedObj;
+//# sourceMappingURL=jkp-utils.js.map
 
 /***/ }),
 /* 4 */
@@ -320,7 +320,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-var jkp = __webpack_require__(2);
+var jkp = __webpack_require__(3);
 var $ = __webpack_require__(15);
 window.$ = window.jQuery = $;
 var Popper = __webpack_require__(16);
@@ -367,18 +367,56 @@ function start(sel, spnr, href, func) {
     });
 }
 exports.start = start;
-function updateMain(sel, html) {
-    var dom = $(html);
-    dom.find('#header').remove();
-    $(sel).html(dom);
-    $(sel).find('a').click(function () {
-        loadUrl($(this).attr('href'));
-        return false;
-    });
+function updateMainInfo(sel, html) {
+    $('#info').html(html);
 }
-exports.updateMain = updateMain;
+exports.updateMainInfo = updateMainInfo;
+function updateMainBookmarks(sel, html) {
+    $(sel).html('');
+    var listy = $('dl', html);
+    for (var i = 0; i < listy.length; i++) {
+        $(sel).append('<div id="bk' + i + '" class="col-sm-6 col-md-4 col-lg-3"></div>');
+        var bieżąca_lista = listy.eq(i);
+        var bieżące_pozycje = bieżąca_lista.children('dt');
+        $('#bk' + i).append('<h4>' + bieżąca_lista.prev().html() + '</h4>');
+        $('#bk' + i).append('<p><dl>');
+        for (var j = 0; j < bieżące_pozycje.length; j++) {
+            var bieżąca_pozycja = bieżące_pozycje.eq(j);
+            var bieżące_linki = bieżąca_pozycja.children('a');
+            if (bieżące_linki.length > 0) {
+                var link = bieżące_linki.first();
+                if (link.attr('ICON_URI') != null)
+                    $('#bk' + i).append('<dt><a href="' + link.attr('href') + '"><img src="' + link.attr('ICON_URI') + '" alt="" title="' + link.text() + '" width="16" height="16"> ' + link.text() + '</a></dt>');
+                else
+                    $('#bk' + i).append('<dt>' + link[0].outerHTML + '</dt>');
+            }
+        }
+        $('#bk' + i).append('</dl></p>');
+    }
+    $(sel).find('a').attr('target', '_blank');
+}
+exports.updateMainBookmarks = updateMainBookmarks;
+function updateMainIcons(sel, html) {
+    $(sel).html('');
+    var links = $('a[icon], a[icon_uri]', html);
+    $(sel).append('<p>');
+    for (var i = 0; i < links.length; i++) {
+        var link = links.eq(i);
+        if (link.attr('ICON_URI') != null)
+            $(sel).append('<a href="' + link.attr('href') + '"><img src="' + link.attr('ICON_URI') + '" alt="' + link.text() + '" title="' + link.text() + '" width="32" height="32"></a> ');
+        else
+            $(sel).append('<a href="' + link.attr('href') + '"><img src="' + link.attr('ICON') + '" alt="' + link.text() + '" title="' + link.text() + '" width="32" height="32"></a> ');
+    }
+    $(sel).append('</p>');
+    $(sel).find('a').attr('target', '_blank');
+}
+exports.updateMainIcons = updateMainIcons;
 function startMain(href) {
-    start("#main", "#spnnr", href, updateMain);
+    start('#info', '#info', '/info.html', updateMainInfo);
+    start('#icns', '#icns', '/icons.html', updateMainIcons);
+    start('#bks', '#bke', '/bookmarks.html', updateMainBookmarks);
+    $('#google').focus();
+    // start("#main", "#spnnr", href, updateMain)
 }
 exports.startMain = startMain;
 window.startMain = startMain;
@@ -509,8 +547,8 @@ function prepareBookmarks(element) {
         });
         return false;
     });
-    element.find('h1').after('<button title="Zmień..." class="jkp edit-folder btn btn-sm btn-outline-primary"><span class="fa fa-pencil-square-o"></span></button><button title="Odśwież folder..." class="jkp refresh-folder btn btn-sm btn-outline-warning"><span class="fa fa-check-square-o"></span></button> <button title="Dodaj folder..." class="jkp add-folder btn btn-sm btn-outline-success"><span class="fa fa-plus-square-o"></span></button>');
-    element.find('h3').after('<button title="Zmień..." class="jkp edit-folder btn btn-sm btn-outline-primary"><span class="fa fa-pencil-square-o"></span></button> <button title="Usuń folder" class="jkp remove-folder btn btn-sm btn-outline-danger"><span class="fa fa-times-rectangle-o"></span></button> <button title="Dodaj folder..." class="jkp create-folder btn btn-sm btn-outline-success"><span class="fa fa-plus-square-o"></span></button><button title="Odśwież folder..." class="jkp refresh-folder btn btn-sm btn-outline-warning"><span class="fa fa-check-square-o"></span></button> <button title="Dodaj zakładkę..." class="jkp add-link btn btn-sm btn-outline-success"><span class="fa fa-plus"></span></button>');
+    element.find('h1').after('<button title="Zmień..." class="jkp edit-folder btn btn-sm btn-outline-primary"><span class="fa fa-pencil-square-o"></span></button> <button title="Odśwież folder..." class="jkp refresh-folder btn btn-sm btn-outline-warning"><span class="fa fa-check-square-o"></span></button> <button title="Dodaj folder..." class="jkp add-folder btn btn-sm btn-outline-success"><span class="fa fa-plus-square-o"></span></button>');
+    element.find('h3').after('<button title="Zmień..." class="jkp edit-folder btn btn-sm btn-outline-primary"><span class="fa fa-pencil-square-o"></span></button> <button title="Usuń folder" class="jkp remove-folder btn btn-sm btn-outline-danger"><span class="fa fa-times-rectangle-o"></span></button> <button title="Dodaj folder..." class="jkp create-folder btn btn-sm btn-outline-success"><span class="fa fa-plus-square-o"></span></button> <button title="Odśwież folder..." class="jkp refresh-folder btn btn-sm btn-outline-warning"><span class="fa fa-check-square-o"></span></button> <button title="Dodaj zakładkę..." class="jkp add-link btn btn-sm btn-outline-success"><span class="fa fa-plus"></span></button>');
     element.find('a').after(' <button title="Usuń zakładkę" class="jkp remove-link btn btn-sm btn-outline-danger"><span class="fa fa-times"></span></button> <button title="Dodaj zakładkę..." class="jkp create-link btn btn-sm btn-outline-success"><span class="fa fa-plus"></span></button>');
     element.find('dd, hr').after(' <button title="Usuń element" class="jkp remove-tag btn btn-sm btn-outline-danger"><span class="fa fa-times-circle"></span></button>');
     element.find('.edit-folder').click(function () {
@@ -13503,7 +13541,7 @@ Popper.Defaults = Defaults;
 /* harmony default export */ __webpack_exports__["default"] = (Popper);
 //# sourceMappingURL=popper.js.map
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2)))
 
 /***/ }),
 /* 17 */
@@ -19672,7 +19710,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
 /* 21 */
