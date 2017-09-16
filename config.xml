@@ -1,12 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.cordova.jkpluta" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Jan K. Pluta</name>
-    <description>
-        Eksperymentalna strona startowa
-    </description>
-    <author email="jkpluta@gmail.com" href="https://jkpluta.github.io/">
-        Jan K. Pluta
-    </author>
+    <description>Eksperymentalna strona startowa</description>
+    <author email="jkpluta@gmail.com" href="jkpluta.github.io">Jan K. Pluta</author>
     <icon src="res/icon.png" />
     <content src="index.html" />
     <access origin="*" />
