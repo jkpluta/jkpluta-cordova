@@ -1,12 +1,13 @@
 {
-    "name": "jkpluta-electron",
+    "name": "jkpluta-cordova",
     "displayName": "Jan K. Pluta",
     "version": "1.0.1",
     "description": "Eksperymentalna strona startowa",
     "main": "index.js",
     "homepage": "https://jkpluta.github.io",
     "scripts": {
-        "android": "cordova build android && cp ./platforms/android/build/outputs/apk/android-debug.apk ~/Dropbox/",
+        "android": "cordova build android",
+        "android-linux": "cordova build android && cp ./platforms/android/build/outputs/apk/android-debug.apk ~/Dropbox/",
         "browser": "cordova run browser"
     },
     "author": {
