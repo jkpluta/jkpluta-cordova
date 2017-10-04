@@ -26,6 +26,7 @@ window.Popper = Popper;
 require("bootstrap");
 var markdown = require("markdown").markdown;
 var iconSize = 16;
+var draggable = null;
 var base_url = "https://jkpluta.github.io";
 function startAjax(sel, spnr, base, href, func) {
     if (spnr != null)
@@ -48,7 +49,7 @@ function startAjax(sel, spnr, base, href, func) {
     });
 }
 exports.startAjax = startAjax;
-function start(sel, spnr, href, func) {
+function startHome(sel, spnr, href, func) {
     if (spnr != null)
         $(spnr).html('<img src="../img/spinner.gif">');
     $.ajax({
@@ -64,7 +65,26 @@ function start(sel, spnr, href, func) {
         }
     });
 }
-exports.start = start;
+exports.startHome = startHome;
+function startJson(sel, spnr, href, func) {
+    if (spnr != null)
+        $(spnr).html('<img src="../img/spinner.gif">');
+    $.ajax({
+        url: href,
+        dataType: "json",
+        method: "GET",
+        cache: false,
+        success: function (html) {
+            $(spnr).html('');
+            func(sel, html);
+        },
+        error: function (xhr, status, error) {
+            if (spnr != null)
+                $(spnr).html('<img src="../img/error.png"> <b>' + status + '</b> <i>' + error + '</i>');
+        }
+    });
+}
+exports.startJson = startJson;
 function updateMainInfo(sel, html) {
     $('#info').html(html);
 }
@@ -109,12 +129,56 @@ function updateMainIcons(sel, html) {
     $(sel).find('a').attr('target', '_blank');
 }
 exports.updateMainIcons = updateMainIcons;
+function startJson(sel, spnr, href, func) {
+    if (spnr != null)
+        $(spnr).html('<img src="../img/spinner.gif">');
+    $.ajax({
+        url: href,
+        dataType: "json",
+        method: "GET",
+        cache: false,
+        success: function (html) {
+            $(spnr).html('');
+            func(sel, html);
+        },
+        error: function (xhr, status, error) {
+            if (spnr != null)
+                $(spnr).html('<img src="../img/error.png"> <b>' + status + '</b> <i>' + error + '</i>');
+        }
+    });
+}
+exports.startJson = startJson;
+function updateMainGists(sel, data) {
+    var gists = data;
+    if (gists.length == 0)
+        $(sel).prev().hide();
+    else
+        $(sel).prev().append('<div class="col-12"><h4>Zapiski</h4></div>');
+    for (var idx in gists) {
+        var gist = gists[idx];
+        if (gist.description === 'Jan K. Pluta')
+            startJson(sel, null, gist.files['bookmark.json'].raw_url, updateMainGist);
+    }
+}
+exports.updateMainGists = updateMainGists;
+function updateMainGist(sel, data) {
+    if (data.type === "jkpluta.bookmark") {
+        var link = $('<div class="col-sm-12 col-md-6 col-lg-4"><a></a></div>').appendTo($(sel)).children('a:first');
+        link.attr('href', data.url);
+        link.text(data.title);
+        if (data.description != null)
+            link.parent().after('<div class="col-sm-12 col-md-6 col-lg-8">' + data.description + '</div>');
+        else
+            link.parent().after('<div class="col-sm-12 col-md-6 col-lg-8"><i>Proponowana zakładka</i></div>');
+    }
+}
+exports.updateMainGist = updateMainGist;
 function startMain(href) {
-    start('#info', '#info', '/info.html', updateMainInfo);
-    start('#icns', '#icns', '/icons.html', updateMainIcons);
-    start('#bks', '#bke', '/bookmarks.html', updateMainBookmarks);
+    startHome('#info', '#info', '/info.html', updateMainInfo);
+    startHome('#icns', '#icns', '/icons.html', updateMainIcons);
+    startHome('#bks', '#bke', '/bookmarks.html', updateMainBookmarks);
+    startJson('#gists', '#gsts', 'https://api.github.com/users/jkpluta/gists', updateMainGists);
     $('#google').focus();
-    // start("#main", "#spnnr", href, updateMain)
 }
 exports.startMain = startMain;
 window.startMain = startMain;
@@ -123,6 +187,71 @@ function updateBookmarks(sel, html) {
     prepareBookmarks($(sel));
 }
 exports.updateBookmarks = updateBookmarks;
+function updateGists(sel, data) {
+    $(sel).html('<dt><h1>Zapiski</h1><dl></dl></dt>');
+    var gists = data;
+    for (var idx in gists) {
+        var gist = gists[idx];
+        if (gist.description === 'Jan K. Pluta')
+            startJson(sel, null, gist.files['bookmark.json'].raw_url, updateGist);
+    }
+}
+exports.updateGists = updateGists;
+function updateGist(sel, data) {
+    if (data.type === "jkpluta.bookmark") {
+        var link = $('<dt><a></a>').appendTo($(sel).find('dl:first')).children('a:first');
+        link.attr('href', data.url);
+        link.text(data.title);
+        link.attr('draggable', "false");
+        link.click(function () {
+            var link = $(this);
+            $('#link-name').val(link.text());
+            $('#link-address').val(link.attr('href'));
+            var group = link.parent().parent().parent().find('h3').text();
+            var gridx = -1;
+            $('#link-group').html('');
+            $("#bookmarks h3").each(function (idx, elmnt) {
+                $('#link-group').append($("<option></option>").attr("value", idx).text(elmnt.innerText));
+                if (elmnt.innerText === group)
+                    gridx = idx;
+            });
+            $('#link-group').val(gridx);
+            $('#div-group').show();
+            $('#link-edit').modal({});
+            $('#link-apply').off();
+            $('#link-apply').click(function () {
+                $('#link-apply').off();
+                link.attr('href', $('#link-address').val().toString());
+                if ($("#link-favicon").is(":visible"))
+                    link.attr('icon_uri', $('#link-favicon').attr('src'));
+                link.text($('#link-name').val().toString());
+                var idx = $('#link-group').val();
+                if (idx !== gridx && idx >= 0) {
+                    $('#bookmarks h3').eq(idx).parent().children('dl:first').append(link.parent());
+                }
+                prepareBookmark(link);
+                return true;
+            });
+            return false;
+        });
+        link.after(' <button title="Usuń zakładkę" class="jkp remove-gist btn btn-sm btn-outline-danger"><span class="fa fa-times-circle"></span></button>');
+        link.parent().find('.remove-gist').click(function () {
+            $(this).parent().remove();
+        });
+        link.parent().attr('draggable', "true");
+        link.parent().on('dragstart', function (e) {
+            e.stopPropagation();
+            if (draggable == null)
+                draggable = this;
+        });
+        link.parent().on('dragend', function (e) {
+            e.stopPropagation();
+            draggable = null;
+        });
+        findFavicon(link, null, data.url);
+    }
+}
+exports.updateGist = updateGist;
 function startBookmarks(href, size) {
     iconSize = size;
     $('#save').click(function () {
@@ -130,7 +259,7 @@ function startBookmarks(href, size) {
     });
     $('#refresh').click(function () {
         clearAlert();
-        start("#bookmarks", "#bookmarks", href, updateBookmarks);
+        startHome("#bookmarks", "#bookmarks", href, updateBookmarks);
     });
     $('#link-edit').on('show.bs.modal', function () {
         $('#link-favicon').removeAttr('src');
@@ -143,7 +272,8 @@ function startBookmarks(href, size) {
     $('#link-address').on('blur', function () {
         findFavicon('#link-favicon', '#link-spinner', $('#link-address').val().toString());
     });
-    start('#bookmarks', '#bookmarks', href, updateBookmarks);
+    startHome('#bookmarks', '#bookmarks', href, updateBookmarks);
+    startJson('#gists', '#gists', 'https://api.github.com/users/jkpluta/gists', updateGists);
 }
 exports.startBookmarks = startBookmarks;
 window.startBookmarks = startBookmarks;
@@ -190,8 +320,10 @@ function prepareBookmarks(element) {
                     $(this).children('dl').first().append($(draggable));
                 else
                     $(this).before($(draggable));
+            $(draggable).children('button').remove();
             $(draggable).css('left', '');
             $(draggable).css('top', '');
+            prepareBookmarks($(draggable));
         }
         else {
             if (oe.dataTransfer != null) {
@@ -217,13 +349,11 @@ function prepareBookmarks(element) {
         e.stopPropagation();
         if (draggable == null)
             draggable = this;
-        clearAlert();
     });
     $('dt').on('dragend', function (e) {
         e.stopPropagation();
         draggable = null;
     });
-    var draggable = null;
     element.find('a[icon_uri]').each(function () {
         prepareBookmark($(this));
     });
@@ -232,6 +362,16 @@ function prepareBookmarks(element) {
         var link = $(this);
         $('#link-name').val(link.text());
         $('#link-address').val(link.attr('href'));
+        var group = link.parent().parent().parent().find('h3').text();
+        var gridx = -1;
+        $('#link-group').html('');
+        $("#bookmarks h3").each(function (idx, elmnt) {
+            $('#link-group').append($("<option></option>").attr("value", idx).text(elmnt.innerText));
+            if (elmnt.innerText === group)
+                gridx = idx;
+        });
+        $('#link-group').val(gridx);
+        $('#div-group').show();
         $('#link-edit').modal({});
         $('#link-apply').off();
         $('#link-apply').click(function () {
@@ -240,6 +380,10 @@ function prepareBookmarks(element) {
             if ($("#link-favicon").is(":visible"))
                 link.attr('icon_uri', $('#link-favicon').attr('src'));
             link.text($('#link-name').val().toString());
+            var idx = $('#link-group').val();
+            if (idx !== gridx && idx >= 0) {
+                $('#bookmarks h3').eq(idx).parent().children('dl:first').append(link.parent());
+            }
             prepareBookmark(link);
             return true;
         });
@@ -300,6 +444,7 @@ function prepareBookmarks(element) {
         var parent = $(this).parent();
         $('#link-name').val('');
         $('#link-address').val('');
+        $('#div-group').hide();
         $('#link-edit').modal({});
         $('#link-apply').off();
         $('#link-apply').click(function () {
@@ -320,6 +465,7 @@ function prepareBookmarks(element) {
         var parent = $(this).parent();
         $('#link-name').val('');
         $('#link-address').val('');
+        $('#div-group').hide();
         $('#link-edit').modal({});
         $('#link-apply').off();
         $('#link-apply').click(function () {
@@ -452,9 +598,9 @@ function startInfo(href) {
     });
     $('#refresh').click(function () {
         clearAlert();
-        start("#md", "#spnnr", href, updateInfo);
+        startHome("#md", "#spnnr", href, updateInfo);
     });
-    start("#md", "#spnnr", href, updateInfo);
+    startHome("#md", "#spnnr", href, updateInfo);
 }
 exports.startInfo = startInfo;
 window.startInfo = startInfo;

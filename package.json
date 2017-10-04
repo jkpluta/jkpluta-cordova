@@ -1,7 +1,7 @@
 {
     "name": "jkpluta-cordova",
     "displayName": "Jan K. Pluta",
-    "version": "1.0.1",
+    "version": "1.2.0",
     "description": "Eksperymentalna strona startowa",
     "main": "index.js",
     "homepage": "https://jkpluta.github.io",
