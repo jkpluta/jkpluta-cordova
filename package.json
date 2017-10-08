@@ -5,7 +5,8 @@
     "description": "Eksperymentalna strona startowa",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "android": "cordova build android",
+        "android-linux": "cordova build android && cp ./platforms/android/build/outputs/apk/android-debug.apk ../jkpluta.github.io/download/"
     },
     "author": {
         "name": "Jan K. Pluta",
