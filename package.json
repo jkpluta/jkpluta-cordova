@@ -1,14 +1,11 @@
 {
-    "name": "jkpluta-cordova",
-    "displayName": "Jan K. Pluta",
+    "name": "helloworld",
+    "displayName": "HelloCordova",
     "version": "1.2.0",
     "description": "Eksperymentalna strona startowa",
     "main": "index.js",
-    "homepage": "https://jkpluta.github.io",
     "scripts": {
-        "android": "cordova build android",
-        "android-linux": "cordova build android && cp ./platforms/android/build/outputs/apk/android-debug.apk ~/Dropbox/",
-        "browser": "cordova run browser"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": {
         "name": "Jan K. Pluta",
@@ -16,10 +13,6 @@
         "url": "jkpluta.github.io"
     },
     "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jkpluta/jkpluta-cordova.git"
-    },
     "dependencies": {
         "cordova-android": "^6.2.3",
         "cordova-browser": "^4.1.0",
@@ -33,5 +26,6 @@
             "android",
             "browser"
         ]
-    }
+    },
+    "homepage": "https://jkpluta.github.io"
 }
