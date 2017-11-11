@@ -1,33 +1,33 @@
 {
-    "name": "jkpluta-cordova",
-    "displayName": "Jan K. Pluta",
-    "version": "1.6.0",
-    "description": "Eksperymentalna strona startowa",
-    "main": "index.js",
-    "scripts": {
-        "browser": "cordova run browser",
-        "android": "cordova build android",
-        "android-linux": "cordova build android && sudo cp ./platforms/android/build/outputs/apk/android-debug.apk /var/www/html/download/"
+  "name": "jkpluta-cordova",
+  "displayName": "Jan K. Pluta",
+  "version": "1.6.0",
+  "description": "Eksperymentalna strona startowa",
+  "main": "index.js",
+  "scripts": {
+    "browser": "cordova run browser",
+    "android": "cordova build android",
+    "android-linux": "cordova build android && sudo cp ./platforms/android/build/outputs/apk/android-debug.apk /var/www/html/download/"
+  },
+  "author": {
+    "name": "Jan K. Pluta",
+    "email": "jkpluta@gmail.com",
+    "url": "https://jkpluta.github.io"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cordova-android": "^6.2.3",
+    "cordova-browser": "^4.1.0",
+    "cordova-plugin-whitelist": "^1.3.2"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {}
     },
-    "author": {
-        "name": "Jan K. Pluta",
-        "email": "jkpluta@gmail.com",
-        "url": "https://jkpluta.github.io"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "cordova-android": "^6.2.3",
-        "cordova-browser": "^4.1.0",
-        "cordova-plugin-whitelist": "^1.3.2"
-    },
-    "cordova": {
-        "plugins": {
-            "cordova-plugin-whitelist": {}
-        },
-        "platforms": [
-            "android",
-            "browser"
-        ]
-    },
-    "homepage": "https://jkpluta.github.io"
+    "platforms": [
+      "android",
+      "browser"
+    ]
+  },
+  "homepage": "https://jkpluta.github.io"
 }
