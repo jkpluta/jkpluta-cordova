@@ -1,17 +1,18 @@
 {
     "name": "jkpluta-cordova",
     "displayName": "Jan K. Pluta",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "Eksperymentalna strona startowa",
     "main": "index.js",
     "scripts": {
+        "browser": "cordova run browser",
         "android": "cordova build android",
         "android-linux": "cordova build android && sudo cp ./platforms/android/build/outputs/apk/android-debug.apk /var/www/html/download/"
     },
     "author": {
         "name": "Jan K. Pluta",
         "email": "jkpluta@gmail.com",
-        "url": "jkpluta.github.io"
+        "url": "https://jkpluta.github.io"
     },
     "license": "MIT",
     "dependencies": {
