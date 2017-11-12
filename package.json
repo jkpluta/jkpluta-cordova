@@ -7,7 +7,7 @@
     "scripts": {
         "browser": "cordova run browser",
         "android": "cordova build android",
-        "android-linux": "cordova build android && sudo cp ./platforms/android/build/outputs/apk/android-debug.apk /var/www/html/download/"
+        "android-linux": "cordova build android && sudo cp ./platforms/android/build/outputs/apk/android-debug.apk /var/www/html/download/jkpluta-cordova"
     },
     "author": {
         "name": "Jan K. Pluta",
